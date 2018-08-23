@@ -1,0 +1,31 @@
+{
+  "name": "larkplayer-auto-resume",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dblate/larkplayer-auto-resume.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dblate/larkplayer-auto-resume/issues"
+  },
+  "homepage": "https://github.com/dblate/larkplayer-auto-resume#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-preset-env": "^1.7.0",
+    "webpack": "^4.17.1"
+  },
+  "dependencies": {
+    "lodash.isplainobject": "^4.0.6",
+    "lodash.throttle": "^4.1.1",
+    "storage-available": "^1.1.0"
+  }
+}
