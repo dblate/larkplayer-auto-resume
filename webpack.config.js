@@ -1,6 +1,8 @@
 var path = require('path');
 
 module.exports = {
+    devtool: 'source-map',
+    mode: 'development',
     entry: './index.js',
     output: {
         path: path.resolve(__dirname, 'dist'),
@@ -17,9 +19,17 @@ module.exports = {
         }
     },
     module: {
-        rules: [{
+        rules: [
+        {
             test: /\.js$/,
-            loader: 'babel-loader'
-        }]
+            exclude: /(node_modules|bower_components)/,
+            use: {
+                loader: 'babel-loader',
+                options: {
+                    presets: ['babel-preset-env']
+                }
+            }
+        }
+      ]
     }
-}
+};

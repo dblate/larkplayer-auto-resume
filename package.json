@@ -1,6 +1,6 @@
 {
   "name": "larkplayer-auto-resume",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "./dist/index.js",
   "scripts": {
@@ -18,14 +18,20 @@
   },
   "homepage": "https://github.com/dblate/larkplayer-auto-resume#readme",
   "devDependencies": {
+    "@babel/core": "^7.4.0",
+    "@babel/preset-env": "^7.4.2",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",
     "babel-preset-env": "^1.7.0",
     "webpack": "^4.17.1"
   },
   "dependencies": {
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "css-loader": "^2.1.1",
     "lodash.isplainobject": "^4.0.6",
     "lodash.throttle": "^4.1.1",
-    "storage-available": "^1.1.0"
+    "storage-available": "^1.1.0",
+    "style-loader": "^0.23.1",
+    "url-loader": "^1.1.2"
   }
 }

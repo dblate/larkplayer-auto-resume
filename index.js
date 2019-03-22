@@ -26,8 +26,8 @@ export default class AutoResume extends Plugin {
         super(player, options);
 
         this.NAME = 'larkplayer-auto-resume';
-        this.recordTime = throttle(this.recordTime, 500);
         this.recordTime = this.recordTime.bind(this);
+        this.recordTime = throttle(this.recordTime, 500);
         this.resumePlaying = this.resumePlaying.bind(this);
         this.player.on('timeupdate', this.recordTime);
         this.player.on('firstplay', this.resumePlaying);
@@ -103,6 +103,7 @@ export default class AutoResume extends Plugin {
     }
 
     dispose() {
+        this.recordTime.cancel();
         this.player.off('timeupdate', this.recordTime);
         this.player.off('firstplay', this.resumePlaying);
 
