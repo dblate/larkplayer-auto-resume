@@ -2,6 +2,7 @@
  * @file larkplayer 断点续播插件
  * @author yuhui06
  * @date 2018/8/22
+ *       2019/5/9 解决 timeupdate 和 firstplay 触发顺序问题，优化视频总时长获取方式
  */
 
 import {Plugin, DOM} from 'larkplayer';
@@ -25,12 +26,12 @@ export default class AutoResume extends Plugin {
     constructor(player, options) {
         super(player, options);
 
-        this.NAME = 'larkplayer-auto-resume';
+        this.NAME = 'larkplayer-auto-resume-local';
         this.recordTime = this.recordTime.bind(this);
         this.recordTime = throttle(this.recordTime, 500);
         this.resumePlaying = this.resumePlaying.bind(this);
-        this.player.on('timeupdate', this.recordTime);
-        this.player.on('firstplay', this.resumePlaying);
+        this.handleFirstplay = this.handleFirstplay.bind(this);
+        this.player.on('firstplay', this.handleFirstplay);
     }
 
     getMinPlayed() {
@@ -38,8 +39,8 @@ export default class AutoResume extends Plugin {
         return Math.max(minPlayed, 0);
     }
 
-    getMaxPlayed() {
-        const duration = this.player.duration() || 0;
+    getMaxPlayed(o) {
+        const duration = o.duration || this.player.duration() || 0;
         const defaultMax = Math.max(duration - 5, 0);
         const maxPlayed = parseInt(this.options.maxPlayed, 10) || 0;
 
@@ -56,6 +57,10 @@ export default class AutoResume extends Plugin {
         }
     }
 
+    getLastPlayed(o) {
+        return o.time;
+    }
+
     getKey() {
         const src = this.player.src();
         return (typeof this.options.key === 'function') ? this.options.key(src) : src;
@@ -70,12 +75,19 @@ export default class AutoResume extends Plugin {
         }
     }
 
+    handleFirstplay() {
+        this.resumePlaying();
+
+        this.player.off('timeupdate', this.recordTime);
+        this.player.on('timeupdate', this.recordTime);
+    }
+
     resumePlaying() {
         const lastRecord = this.getRecord();
-        if (lastRecord) {
-            const key = this.getKey();
-            const lastPlayed = lastRecord[key];
-            const maxPlayed = this.getMaxPlayed();
+        const key = this.getKey();
+        if (lastRecord && lastRecord[key]) {
+            const lastPlayed = this.getLastPlayed(lastRecord[key]);
+            const maxPlayed = this.getMaxPlayed(lastRecord[key]);
             const minPlayed = this.getMinPlayed();
 
             if (lastPlayed && lastPlayed > minPlayed && lastPlayed < maxPlayed) {
@@ -88,8 +100,12 @@ export default class AutoResume extends Plugin {
         const lastRecord = this.getRecord();
         const currentTime = this.player.currentTime();
         const key = this.getKey();
+        const duration = this.player.duration();
 
-        lastRecord[key] = currentTime;
+        lastRecord[key] = {
+            time: currentTime,
+            duration: duration
+        };
 
         try {
             localStorage.setItem(this.NAME, JSON.stringify(lastRecord));
